@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+# Añade aquí el sitemap de tu despliegue cuando conozcas la URL pública.

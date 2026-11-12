@@ -1,0 +1,11 @@
+{
+  "name": "CausalDiagram Studio",
+  "short_name": "CausalDiagram",
+  "description": "Generador visual de diagramas causales de dinámica de sistemas.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#f7f9fc",
+  "icons": [{"src":"assets/images/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

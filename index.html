@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fc">
+  <meta name="description" content="Genera, edita y exporta diagramas causales de dinámica de sistemas de forma automática. Herramienta visual gratuita para estudiantes, docentes e investigadores.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CausalDiagram Studio - Generador de Diagramas Causales">
+  <meta property="og:description" content="Crea diagramas causales, identifica ciclos de retroalimentación y exporta tus modelos.">
+  <title>CausalDiagram Studio - Generador de Diagramas Causales</title>
+  <script>try{var t=localStorage.getItem("cds-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/editor.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="CausalDiagram Studio inicio">
+        <span class="brand-mark"><i data-lucide="git-fork"></i></span>
+        <span class="brand-copy"><strong>CausalDiagram</strong><small>STUDIO</small></span>
+      </a>
+      <div class="project-title-wrap">
+        <input id="project-name" class="project-name" value="Modelo sin título" aria-label="Nombre del proyecto">
+        <span id="save-indicator" class="save-indicator"><span class="status-dot"></span> Guardado local</span>
+      </div>
+      <nav class="top-actions" aria-label="Acciones del proyecto">
+        <button class="icon-button" id="new-project-btn" title="Nuevo proyecto"><i data-lucide="file-plus-2"></i><span>Nuevo</span></button>
+        <button class="icon-button" id="open-project-btn" title="Abrir proyecto"><i data-lucide="folder-open"></i><span>Abrir</span></button>
+        <button class="icon-button" id="save-project-btn" title="Guardar proyecto"><i data-lucide="save"></i><span>Guardar</span></button>
+        <span class="toolbar-separator"></span>
+        <button class="icon-button" id="undo-btn" title="Deshacer (Ctrl+Z)" disabled><i data-lucide="undo-2"></i></button>
+        <button class="icon-button" id="redo-btn" title="Rehacer (Ctrl+Y)" disabled><i data-lucide="redo-2"></i></button>
+        <button class="button button-primary" id="export-open-btn"><i data-lucide="download"></i> Exportar</button>
+        <button class="icon-button theme-toggle" id="theme-toggle-btn" title="Cambiar tema" aria-label="Cambiar tema" aria-pressed="false"><i data-lucide="moon" class="icon-moon"></i><i data-lucide="sun" class="icon-sun"></i></button>
+        <button class="icon-button help-button" id="help-btn" title="Ayuda"><i data-lucide="circle-help"></i></button>
+      </nav>
+      <input type="file" id="project-file-input" accept=".json,application/json" hidden>
+    </header>
+
+    <main class="workspace">
+      <aside class="left-panel panel" id="left-panel">
+        <div class="panel-heading"><div><span class="eyebrow">CONSTRUCTOR</span><h1>Datos del modelo</h1></div><button class="mobile-close icon-button" data-close-panel="left-panel" aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+        <div class="panel-scroll">
+          <section class="section-block">
+            <div class="section-title"><span class="section-number">01</span><h2>Crear desde datos</h2><span class="tag tag-accent">Rápido</span></div>
+            <p class="section-help">Pega las variables y relaciones. El editor construirá el diagrama automáticamente.</p>
+            <div class="segmented" role="tablist" aria-label="Modo de entrada">
+              <button class="segment active" data-input-mode="text" role="tab" aria-selected="true">Texto</button>
+              <button class="segment" data-input-mode="table" role="tab" aria-selected="false">Tabla</button>
+              <button class="segment" data-input-mode="natural" role="tab" aria-selected="false">Descripción</button>
+            </div>
+            <textarea id="quick-input" class="quick-input" spellcheck="false" rows="10">Nombre: Modelo de población
+
+Variables:
+Población
+Nacimientos
+Decesos
+Recursos
+
+Relaciones:
+Población -> Nacimientos (+)
+Nacimientos -> Población (+)
+Población -> Decesos (+)
+Decesos -> Población (-)
+Población -> Recursos (-)
+Recursos -> Decesos (-)</textarea>
+            <div id="parser-hint" class="input-hint">Usa una relación por línea: Variable A -&gt; Variable B (+).</div>
+            <div class="button-row"><button class="button button-secondary button-full" id="preview-input-btn"><i data-lucide="scan-eye"></i> Revisar datos</button><button class="button button-primary button-full" id="generate-btn"><i data-lucide="wand-sparkles"></i> Generar diagrama</button></div>
+            <div id="parse-preview" class="parse-preview hidden"></div>
+            <details class="meta-details"><summary>Información general del modelo</summary>
+              <label for="model-description">Descripción</label><textarea id="model-description" rows="2" placeholder="¿Qué sistema representa este diagrama?"></textarea>
+              <label for="model-category">Categoría</label><select id="model-category"><option>General</option><option>Dinámica de sistemas</option><option>Educación</option><option>Salud</option><option>Economía</option><option>Tecnología</option><option>Medio ambiente</option><option>Social</option><option>Producción</option><option>Otros</option></select>
+            </details>
+          </section>
+
+          <section class="section-block">
+            <div class="section-title"><span class="section-number">02</span><h2>Variables</h2><span id="variable-count" class="count-pill">0</span></div>
+            <form id="variable-form" class="compact-form">
+              <label for="variable-name">Nombre de la variable</label>
+              <div class="inline-field"><input id="variable-name" type="text" placeholder="Ej. Población" maxlength="70" required><button class="square-button" type="submit" title="Agregar variable"><i data-lucide="plus"></i></button></div>
+              <div class="form-grid"><div><label for="variable-type">Tipo</label><select id="variable-type"><option value="general">General</option><option value="stock">Nivel / Stock</option><option value="flow">Flujo</option><option value="auxiliary">Auxiliar</option><option value="external">Factor externo</option></select></div><div><label for="variable-color">Color</label><input id="variable-color" class="color-input" type="color" value="#dceafe"></div></div>
+            </form>
+            <div id="variable-list" class="item-list empty-list">Todavía no hay variables.</div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-title"><span class="section-number">03</span><h2>Relaciones causales</h2><span id="relationship-count" class="count-pill">0</span></div>
+            <form id="relationship-form" class="compact-form">
+              <label for="relation-source">Variable de origen</label><select id="relation-source" required><option value="">Selecciona origen</option></select>
+              <label for="relation-target">Variable de destino</label><select id="relation-target" required><option value="">Selecciona destino</option></select>
+              <div class="form-grid"><div><label for="relation-polarity">Polaridad</label><select id="relation-polarity"><option value="+">Positiva (+)</option><option value="-">Negativa (−)</option></select></div><div><label for="relation-delay">Retardo (opcional)</label><input id="relation-delay" type="text" placeholder="Ej. 2 meses"></div></div>
+              <button class="button button-secondary button-full" type="submit"><i data-lucide="arrow-left-right"></i> Añadir relación</button>
+            </form>
+            <div id="relationship-list" class="item-list empty-list">Todavía no hay relaciones.</div>
+          </section>
+
+          <section class="section-block section-last">
+            <div class="section-title"><span class="section-number">04</span><h2>Plantillas</h2></div>
+            <label for="template-select">Comenzar con un modelo</label>
+            <select id="template-select"><option value="">Selecciona una plantilla…</option></select>
+            <button class="button button-quiet button-full" id="load-template-btn">Cargar plantilla <i data-lucide="arrow-right"></i></button>
+          </section>
+        </div>
+      </aside>
+
+      <section class="canvas-column" aria-label="Editor del diagrama">
+        <div class="canvas-toolbar">
+          <div class="canvas-toolbar-left"><button class="mobile-panel-button icon-button" data-open-panel="left-panel" title="Datos"><i data-lucide="panel-left"></i></button><div class="canvas-label"><span class="live-dot"></span><span>LIENZO DE TRABAJO</span></div><span class="toolbar-separator"></span><button class="tool-button active" id="select-tool-btn" title="Seleccionar"><i data-lucide="mouse-pointer-2"></i></button><button class="tool-button" id="grid-toggle-btn" title="Mostrar u ocultar cuadrícula"><i data-lucide="grid-3x3"></i></button></div>
+          <div class="canvas-toolbar-right"><label class="layout-select-label" for="layout-select">Distribución</label><select id="layout-select" class="layout-select"><option value="cose">Académica</option><option value="circle">Circular</option><option value="breadthfirst">Jerárquica</option><option value="concentric">Concéntrica</option><option value="manual">Manual</option></select><button id="auto-layout-btn" class="tool-button" title="Organizar automáticamente"><i data-lucide="network"></i></button><span class="toolbar-separator"></span><button id="fit-btn" class="tool-button" title="Ajustar a pantalla"><i data-lucide="maximize"></i></button><button id="zoom-out-btn" class="tool-button" title="Alejar"><i data-lucide="minus"></i></button><span id="zoom-level" class="zoom-level">100%</span><button id="zoom-in-btn" class="tool-button" title="Acercar"><i data-lucide="plus"></i></button><button class="mobile-panel-button icon-button" data-open-panel="right-panel" title="Propiedades"><i data-lucide="sliders-horizontal"></i></button></div>
+        </div>
+        <div class="canvas-wrap" id="canvas-wrap"><div class="canvas-watermark">CAUSALDIAGRAM STUDIO</div><div id="cy" aria-label="Diagrama causal interactivo"></div><div id="empty-state" class="empty-state"><div class="empty-icon"><i data-lucide="git-branch"></i></div><h2>Tu modelo comienza aquí</h2><p>Introduce tus variables y relaciones en el panel izquierdo, o carga una plantilla para explorar el editor.</p><button class="button button-primary" id="empty-template-btn">Explorar plantillas</button></div><div class="canvas-legend"><span><i class="legend-line positive"></i> Positiva (+)</span><span><i class="legend-line negative"></i> Negativa (−)</span><span><i class="legend-cycle"></i> Ciclo detectado</span></div><div id="canvas-toast" class="canvas-toast hidden"></div></div>
+        <footer class="statusbar"><div><span id="status-nodes">0 variables</span><span class="status-divider">·</span><span id="status-edges">0 relaciones</span></div><div><span id="selected-status">Ningún elemento seleccionado</span><span class="status-divider">·</span><span>Los cambios se guardan localmente</span></div></footer>
+      </section>
+
+      <aside class="right-panel panel" id="right-panel">
+        <div class="panel-heading"><div><span class="eyebrow">CONFIGURACIÓN</span><h2>Propiedades</h2></div><button class="mobile-close icon-button" data-close-panel="right-panel" aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+        <div class="panel-scroll" id="properties-content"><div class="properties-empty"><div class="properties-empty-icon"><i data-lucide="mouse-pointer-click"></i></div><strong>Selecciona un elemento</strong><p>Elige una variable o relación en el lienzo para editar sus propiedades.</p></div></div>
+        <div class="cycles-panel"><div class="cycles-heading"><div><span class="eyebrow">DINÁMICA DEL SISTEMA</span><h3>Ciclos de retroalimentación</h3></div><span id="cycle-count" class="count-pill">0</span></div><div class="cycle-summary"><span class="cycle-key reinforcing">R</span><span>Reforzadores</span><strong id="reinforcing-count">0</strong><span class="cycle-key balancing">B</span><span>Compensadores</span><strong id="balancing-count">0</strong></div><div id="cycle-list" class="cycle-list"><p class="cycle-empty">Los ciclos aparecerán aquí cuando existan relaciones cerradas.</p></div><div class="cycle-limit-row"><label for="cycle-limit-select">Límite de ciclos analizados</label><select id="cycle-limit-select"><option value="50">50</option><option value="100">100</option><option value="250" selected>250</option><option value="500">500</option></select></div><label class="toggle-row"><span>Etiquetas de ciclos</span><input type="checkbox" id="cycle-labels-toggle" checked><span class="toggle-switch"></span></label></div>
+      </aside>
+    </main>
+    <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  </div>
+
+  <dialog id="export-dialog" class="app-dialog"><form method="dialog" class="dialog-card"><div class="dialog-header"><div><span class="eyebrow">DESCARGAR</span><h2>Exportar diagrama</h2></div><button class="icon-button" value="cancel" aria-label="Cerrar"><i data-lucide="x"></i></button></div><p class="dialog-copy">Selecciona el formato que necesitas. Las exportaciones gráficas incluyen el diagrama completo.</p><div class="export-grid"><button type="button" class="export-option" data-export="png"><i data-lucide="image"></i><strong>PNG</strong><small>Imagen de alta resolución</small></button><button type="button" class="export-option" data-export="svg"><i data-lucide="file-code-2"></i><strong>SVG</strong><small>Vectorial y escalable</small></button><button type="button" class="export-option" data-export="pdf"><i data-lucide="file-text"></i><strong>PDF</strong><small>Documento A4 imprimible</small></button><button type="button" class="export-option" data-export="json"><i data-lucide="file-json"></i><strong>JSON</strong><small>Proyecto editable</small></button></div><div class="dialog-footer"><label class="check-label"><input type="checkbox" id="export-white-bg" checked> Fondo blanco</label><label class="check-label"><input type="checkbox" id="export-include-cycles" checked> Incluir ciclos</label><label class="check-label"><input type="checkbox" id="export-landscape" checked> PDF horizontal</label><label class="check-label">Título del PDF <select id="export-title-pos" style="width:auto;padding:5px 6px"><option value="left">Arriba a la izquierda</option><option value="right">Arriba a la derecha</option><option value="none">Sin título</option></select></label></div></form></dialog>
+
+  <dialog id="projects-dialog" class="app-dialog"><form method="dialog" class="dialog-card"><div class="dialog-header"><div><span class="eyebrow">BIBLIOTECA LOCAL</span><h2>Mis diagramas</h2></div><button class="icon-button" value="cancel" aria-label="Cerrar"><i data-lucide="x"></i></button></div><div id="saved-projects-list" class="saved-projects-list"></div><div class="dialog-footer"><button type="button" class="button button-secondary" id="import-json-btn"><i data-lucide="file-up"></i> Importar JSON</button><button type="button" class="button button-primary" id="new-from-library-btn">Nuevo proyecto</button></div></form></dialog>
+
+  <dialog id="help-dialog" class="app-dialog"><form method="dialog" class="dialog-card"><div class="dialog-header"><div><span class="eyebrow">GUÍA RÁPIDA</span><h2>Cómo usar CausalDiagram Studio</h2></div><button class="icon-button" value="cancel" aria-label="Cerrar"><i data-lucide="x"></i></button></div><div class="help-content"><h3>1. Introduce tus datos</h3><p>Pega una lista de variables y relaciones con flechas. También puedes pegar una tabla con columnas de origen, destino y polaridad.</p><h3>2. Genera y organiza</h3><p>Presiona «Generar diagrama». Arrastra los nodos para ajustar su posición o utiliza las distribuciones automáticas.</p><h3>3. Edita y analiza</h3><p>Selecciona un nodo o una flecha para cambiar sus propiedades. Los ciclos cerrados se clasifican automáticamente: R (reforzador) o B (compensador).</p><h3>4. Guarda y exporta</h3><p>Los cambios se guardan en este navegador. Puedes descargar el proyecto JSON o exportar PNG, SVG y PDF.</p><div class="notice"><i data-lucide="info"></i><span>El análisis de lenguaje natural es heurístico: revisa siempre las relaciones inferidas antes de generar el modelo.</span></div></div><div class="dialog-footer"><button class="button button-primary" value="cancel">Entendido</button></div></form></dialog>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

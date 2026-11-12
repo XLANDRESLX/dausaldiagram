@@ -1,0 +1,11 @@
+{
+  "name": "causaldiagram-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Editor de diagramas causales de dinámica de sistemas, estático y modular.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check assets/js/app.js && node --check assets/js/modules/feedback-loops.js"
+  }
+}

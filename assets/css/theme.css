@@ -1,0 +1,64 @@
+/* Iconos: lucide reemplaza <i data-lucide> por <svg class="lucide">, así que se dimensionan aquí */
+svg.lucide{width:17px;height:17px;stroke-width:1.8;flex:none}
+.button svg.lucide{width:15px;height:15px}
+.brand-mark svg.lucide{width:19px;height:19px}
+.mini-action svg.lucide{width:12px;height:12px}
+.empty-icon svg.lucide{width:24px;height:24px}
+.export-option svg.lucide{grid-row:span 2;color:#4778d9;width:20px;height:20px}
+.notice svg.lucide{width:15px;height:15px}
+.saved-project-row svg.lucide{width:15px;height:15px}
+.properties-empty-icon svg.lucide{width:18px;height:18px}
+.theme-toggle .icon-sun{display:none}
+html[data-theme=dark] .theme-toggle .icon-sun{display:inline-flex}
+html[data-theme=dark] .theme-toggle .icon-moon{display:none}
+
+/* ===== Modo oscuro ===== */
+html[data-theme=dark]{color-scheme:dark;background:#0f141c;color:#e6ebf3;--ink:#e6ebf3;--muted:#98a5b8;--line:#2a3444;--soft:#1c2431;--blue:#5b8cff;--blue-dark:#4a78ea;--blue-soft:#1f2d4d;--panel-shadow:none}
+html[data-theme=dark] body{background:#0f141c;color:#e6ebf3}
+html[data-theme=dark] :focus-visible{outline-color:rgba(122,162,255,.45)}
+/* superficies */
+html[data-theme=dark] :is(.topbar,.panel,.canvas-toolbar,.statusbar,.property-form,.cycles-panel,.dialog-card,.app-dialog,.item-row,.export-option,.color-input,.canvas-legend){background:#171d29;border-color:#2a3444;color:#e6ebf3}
+html[data-theme=dark] .canvas-column{background:#121822}
+html[data-theme=dark] .canvas-wrap{background-color:#0f141c;background-image:radial-gradient(#27303f .8px,transparent .8px)}
+html[data-theme=dark] .canvas-wrap.grid-off{background-image:none}
+html[data-theme=dark] .canvas-legend{background:rgba(23,29,41,.94)}
+html[data-theme=dark] :is(.panel-heading,.section-block,.toggle-row,.meta-details,.dialog-footer,.saved-project-row){border-color:#2a3444}
+html[data-theme=dark] .app-dialog::backdrop{background:rgba(5,8,13,.6)}
+/* campos */
+html[data-theme=dark] :is(input:not([type=color]):not([type=checkbox]),select,textarea){background:#1c2431;border-color:#303b4d;color:#e6ebf3}
+html[data-theme=dark] :is(input,textarea)::placeholder{color:#6c7a8f}
+html[data-theme=dark] input:focus,html[data-theme=dark] select:focus,html[data-theme=dark] textarea:focus{border-color:#5b8cff;box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+html[data-theme=dark] .quick-input{background:#121822!important;color:#b9c5d8!important}
+html[data-theme=dark] .layout-select{background:#1c2431;color:#b9c5d8}
+/* botones */
+html[data-theme=dark] .button-secondary{background:#1c2431;color:#d3dcea;border-color:#303b4d}
+html[data-theme=dark] .button-secondary:hover{background:#243044;border-color:#41506a}
+html[data-theme=dark] .button-quiet{color:#a9b6c9}
+html[data-theme=dark] :is(.button-quiet:hover,.icon-button:hover,.tool-button:hover,.mini-action:hover){background:#243044;color:#e6ebf3}
+html[data-theme=dark] :is(.icon-button,.tool-button,.mini-action){color:#98a5b8}
+html[data-theme=dark] :is(.tool-button.active,.square-button,.tag-accent,.brand-mark,.empty-icon){background:#1f2d4d;color:#8fb0ff;border-color:#2c4170}
+html[data-theme=dark] .segmented{background:#121822}
+html[data-theme=dark] .segment{color:#98a5b8}
+html[data-theme=dark] .segment.active{background:#243044;color:#9dbaff;box-shadow:none}
+html[data-theme=dark] .toolbar-separator{background:#2a3444}
+html[data-theme=dark] .toggle-switch{background:#33405a}
+/* textos */
+html[data-theme=dark] :is(.brand,.project-name,.item-main strong,.export-option,.empty-state h2,.help-content h3,.cycle-item-copy strong,.saved-project-row strong){color:#e6ebf3}
+html[data-theme=dark] :is(.brand-copy small,.eyebrow,.save-indicator,.canvas-label,.layout-select-label,.statusbar,.section-help,.input-hint,.empty-state p,.properties-empty p,.dialog-copy,.help-content,.cycle-empty,.item-main small,.export-option small,.saved-project-row small,.cycle-item-copy small,.property-field label,.compact-form label,.section-block>label,.meta-details label,.meta-details summary,.empty-list,.cycle-limit-row label,.toggle-row,.canvas-legend,.zoom-level,.check-label,.relation-flow,.cycle-summary,.canvas-watermark){color:#8d9bb0}
+html[data-theme=dark] :is(.cycle-summary strong,.properties-empty strong){color:#c3cddc}
+html[data-theme=dark] :is(.section-number,.count-pill,.properties-empty-icon){background:#243044;color:#9fb0c7}
+html[data-theme=dark] .status-divider{color:#3a475c}
+/* listas y tarjetas */
+html[data-theme=dark] .polarity-badge.positive,html[data-theme=dark] .cycle-key.reinforcing{background:#12382f;color:#4fd1a5}
+html[data-theme=dark] .polarity-badge.negative{background:#3d2328;color:#ff8d94}
+html[data-theme=dark] .cycle-key.balancing{background:#1f2d4d;color:#8fb0ff}
+html[data-theme=dark] .cycle-item{border-color:#2a3444}
+html[data-theme=dark] :is(.cycle-item:hover,.cycle-item.active,.export-option:hover){background:#1f2d4d;border-color:#3b5594}
+html[data-theme=dark] .parse-preview{background:#18233b;border-color:#2c4170;color:#aebbd0}
+html[data-theme=dark] .parse-preview strong{color:#8fb0ff}
+html[data-theme=dark] .notice{background:#18233b;color:#9db8f0}
+html[data-theme=dark] .live-dot{box-shadow:0 0 0 3px #12382f}
+html[data-theme=dark] .canvas-toast{background:#2a3850}
+html[data-theme=dark] .saved-project-row button{color:#98a5b8}
+.cycle-item .cycle-key{flex:0 0 auto;min-width:24px;padding:0 4px}
+.dialog-footer{flex-wrap:wrap}
